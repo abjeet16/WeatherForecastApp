@@ -27,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -62,10 +62,7 @@ dependencies {
 
     implementation(libs.gson)
 
-    implementation(libs.weatherview)
+    implementation("com.github.MatteoBattilana:WeatherView:3.0.0")
 
-    implementation("androidx.activity:activity-ktx:1.9.3")
-    implementation("com.github.Dimezis:BlurView:version-2.0.3")
     implementation("com.github.bumptech.glide:glide:4.12.0")
-
 }
