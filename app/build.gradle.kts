@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id ("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -13,7 +14,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,13 +33,12 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -49,23 +48,29 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Retro Fit
+    // Retrofit
     implementation(libs.retrofit)
     implementation(libs.gsonConverter)
 
+    // OkHttp
     implementation(libs.okhttp)
     implementation(libs.loggingInterceptor)
 
+    // Lifecycle
     implementation(libs.lifecycleRuntime)
     implementation(libs.lifecycleViewModel)
     implementation(libs.lifecycleLiveData)
 
+    // Gson
     implementation(libs.gson)
 
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation("androidx.activity:activity-ktx:1.9.3")
 
     implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
-
-    implementation ("com.github.Dimezis:BlurView:version-2.0.5")
+}
+kapt{
+    correctErrorTypes = true
 }
