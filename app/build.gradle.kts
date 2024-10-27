@@ -69,7 +69,7 @@ dependencies {
 
     implementation("androidx.activity:activity-ktx:1.9.3")
 
-    implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
+    ///implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
 }
 kapt{
     correctErrorTypes = true

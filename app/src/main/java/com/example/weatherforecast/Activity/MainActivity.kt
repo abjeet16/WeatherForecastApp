@@ -1,21 +1,113 @@
 package com.example.weatherforecast.Activity
 
+import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.view.View
+import android.view.WindowManager
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.weatherforecast.R
+import com.example.weatherforecast.ViewModel.WeatherViewModel
+import com.example.weatherforecast.databinding.ActivityMainBinding
+import com.example.weatherforecast.model.CurrentResponseApi
+import retrofit2.Call
+import retrofit2.Response
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
+    val binding:ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+    private val calendar by lazy {
+        Calendar.getInstance()
+    }
+    private val weatherViewModel:WeatherViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContentView(binding.root)
+
+        window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            statusBarColor = Color.TRANSPARENT
+        }
+        binding.apply {
+            var lat = 51.50
+            var lon = 0.12
+            var name = "London"
+
+            cityTxt.text = name
+            progressBar.visibility = View.VISIBLE
+            weatherViewModel.loadCurrentWeather(lat,lon,"metric")
+                .enqueue(object : retrofit2.Callback<CurrentResponseApi> {
+                    override fun onResponse(
+                        call: Call<CurrentResponseApi>,
+                        response: Response<CurrentResponseApi>
+                    ) {
+                        if (response.isSuccessful) {
+                            val data = response.body()
+                            progressBar.visibility = View.GONE
+                            detailsLayout.visibility = View.VISIBLE
+                            data?.let {
+                                statusTxt.text = it.weather?.get(0)?.main ?: "-"
+                                val currentWindSpeed= it.wind?.speed.let {
+                                    //check if the wind speed from API is not null
+                                    if (it != null) {
+                                        // round off the wind speed
+                                        Math.round(it)
+                                    }
+                                }.toString() + "Km"
+                                val currentTemp = it.main?.temp.let {
+                                    if (it != null) {
+                                            Math.round(it)
+                                    }
+                                }.toString() +"°"
+                                val maxTemp = it.main?.tempMax.let{
+                                    if (it != null) {
+                                            Math.round(it)
+                                    }
+                                }.toString()+"°"
+                                val minTemp = it.main?.tempMin.let {
+                                    if (it != null) {
+                                        Math.round(it)
+                                    }
+                                }.toString()+"°"
+
+                                currentTempTxt.text = currentTemp
+                                windTxt.text = currentWindSpeed
+                                maxTempTxt.text = maxTemp
+                                minTempTxt.text = minTemp
+
+                                val drawable = if (isNightTime()) {
+                                    R.drawable.night_bg
+                                }else{
+                                    R.drawable.
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CurrentResponseApi>, t: Throwable) {
+                        Toast.makeText(this@MainActivity, t.toString(), Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+        }
+    }
+    private fun isNightTime():Boolean{
+        // returns true if the time is above 6pm
+        return calendar.get(Calendar.HOUR_OF_DAY) >= 18
+    }
+    private fun setDynamicallyWallPaper(icon:String):Int{
+        return when(icon.dropLast(1)){
+
+        }
+    }
+    private fun initWeatherView(type:PrecipType){
+        binding.weatherView.apply{
+            setWeatherDate(type)
+            angle =- 20
+            emissionRate
         }
     }
 }
