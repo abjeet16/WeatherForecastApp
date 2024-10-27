@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id ("org.jetbrains.kotlin.kapt")
 }
-
 android {
     namespace = "com.example.weatherforecast"
     compileSdk = 34
@@ -69,7 +68,7 @@ dependencies {
 
     implementation("androidx.activity:activity-ktx:1.9.3")
 
-    ///implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
+    implementation ("com.github.MatteoBattilana:WeatherView:3.0.0")
 }
 kapt{
     correctErrorTypes = true

@@ -11,6 +11,7 @@ import com.example.weatherforecast.R
 import com.example.weatherforecast.ViewModel.WeatherViewModel
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import com.example.weatherforecast.model.CurrentResponseApi
+import com.github.matteobattilana.weather.PrecipType
 import retrofit2.Call
 import retrofit2.Response
 import java.util.Calendar
@@ -81,8 +82,10 @@ class MainActivity : AppCompatActivity() {
                                 val drawable = if (isNightTime()) {
                                     R.drawable.night_bg
                                 }else{
-                                    R.drawable.
+                                    setDynamicallyWallPaper(it.weather?.get(0)?.icon?:"-")
                                 }
+                                bgImage.setImageResource(drawable)
+                                setEffectRainSnow(it.weather?.get(0)?.icon?:"-")
                             }
                         }
                     }
@@ -100,12 +103,56 @@ class MainActivity : AppCompatActivity() {
     }
     private fun setDynamicallyWallPaper(icon:String):Int{
         return when(icon.dropLast(1)){
-
+            "01"->{
+                initWeatherView(PrecipType.CLEAR)
+                R.drawable.snow_bg
+            }
+            "02","03","04"->{
+                initWeatherView(PrecipType.CLEAR)
+                R.drawable.cloudy_bg
+            }
+            "09","10","11"->{
+                initWeatherView(PrecipType.RAIN)
+                R.drawable.rainy_bg
+            }
+            "13"->{
+                initWeatherView(PrecipType.SNOW)
+                R.drawable.snow_bg
+            }
+            "50"->{
+                initWeatherView(PrecipType.CLEAR)
+                R.drawable.haze_bg
+            }
+            else -> 0
         }
     }
-    private fun initWeatherView(type:PrecipType){
+
+    private fun setEffectRainSnow(icon:String){
+        when(icon.dropLast(1)){
+            "01"->{
+                initWeatherView(PrecipType.CLEAR)
+            }
+            "02","03","04"->{
+                initWeatherView(PrecipType.CLEAR)
+
+            }
+            "09","10","11"->{
+                initWeatherView(PrecipType.RAIN)
+
+            }
+            "13"->{
+                initWeatherView(PrecipType.SNOW)
+
+            }
+            "50"->{
+                initWeatherView(PrecipType.CLEAR)
+
+            }
+        }
+    }
+    private fun initWeatherView(type: PrecipType){
         binding.weatherView.apply{
-            setWeatherDate(type)
+            setWeatherData(type)
             angle =- 20
             emissionRate
         }
