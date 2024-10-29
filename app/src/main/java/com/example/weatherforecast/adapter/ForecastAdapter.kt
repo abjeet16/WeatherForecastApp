@@ -3,7 +3,6 @@ package com.example.weatherforecast.adapter
 import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +16,7 @@ class ForecastAdapter : RecyclerView.Adapter<ForecastAdapter.viewHolder>() {
     private lateinit var binding: ForecastViewholderBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
-        val binding = ForecastViewholderBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = ForecastViewholderBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return viewHolder()
     }
 
@@ -27,7 +26,7 @@ class ForecastAdapter : RecyclerView.Adapter<ForecastAdapter.viewHolder>() {
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
         val binding = ForecastViewholderBinding.bind(holder.itemView)
-        val date = SimpleDateFormat("yyy-MM-dd HH:mm:dd").parse(differ.currentList[position].dtTxt.toString())
+        val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(differ.currentList[position].dtTxt.toString())
         val calendar = Calendar.getInstance()
         calendar.time = date
 
