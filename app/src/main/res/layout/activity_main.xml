@@ -33,7 +33,7 @@
         android:layout_height="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:src="@drawable/plus"
+        app:srcCompat="@drawable/plus"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,8 +81,7 @@
                 android:id="@+id/windImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/wind"
-                tools:src="@tools:sample/avatars" />
+                app:srcCompat="@drawable/wind"/>
 
             <TextView
                 android:id="@+id/windTxt"
@@ -98,7 +97,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/TempTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:shadowColor="@color/black"
@@ -156,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginEnd="8dp"
-                    android:src="@drawable/arrow_up" />
+                    app:srcCompat="@drawable/arrow_up"/>
 
                 <TextView
                     android:id="@+id/maxTempTxt"
@@ -189,7 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="8dp"
-                    android:src="@drawable/arrow_down" />
+                    app:srcCompat="@drawable/arrow_down"/>
 
             </LinearLayout>
 
@@ -206,8 +205,7 @@
                 android:id="@+id/imageView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/humidity"
-                tools:src="@tools:sample/avatars" />
+                app:srcCompat="@drawable/humidity"/>
 
             <TextView
                 android:id="@+id/humidityTxt"
@@ -235,8 +233,35 @@
                 android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
-
-
     </LinearLayout>
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView"
+        android:layout_width="match_parent"
+        android:layout_height="143dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:visibility="visible"
+        app:blurOverlayColor="#10ffffff"
+        android:background="@drawable/forecast_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/forecaseRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </eightbitlab.com.blurview.BlurView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

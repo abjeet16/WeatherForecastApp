@@ -1,20 +1,30 @@
 package com.example.weatherforecast.Activity
 
 import android.graphics.Color
+import android.graphics.RenderNode
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.weatherforecast.R
 import com.example.weatherforecast.ViewModel.WeatherViewModel
+import com.example.weatherforecast.adapter.ForecastAdapter
 import com.example.weatherforecast.databinding.ActivityMainBinding
 import com.example.weatherforecast.model.CurrentResponseApi
+import com.example.weatherforecast.model.ForecastResponseApi
 import com.github.matteobattilana.weather.PrecipType
+import eightbitlab.com.blurview.RenderScriptBlur
 import retrofit2.Call
 import retrofit2.Response
 import java.util.Calendar
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     val binding:ActivityMainBinding by lazy {
@@ -23,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val calendar by lazy {
         Calendar.getInstance()
     }
+    private val forecastAdapter by lazy { ForecastAdapter() }
     private val weatherViewModel:WeatherViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +44,11 @@ class MainActivity : AppCompatActivity() {
             statusBarColor = Color.TRANSPARENT
         }
         binding.apply {
-            var lat = 51.50
-            var lon = 0.12
-            var name = "London"
+            var lat = 32.733
+            var lon = 74.867
+            var name = "Mysuru"
 
+            //CURRENT TEMP
             cityTxt.text = name
             progressBar.visibility = View.VISIBLE
             weatherViewModel.loadCurrentWeather(lat,lon,"metric")
@@ -51,29 +63,25 @@ class MainActivity : AppCompatActivity() {
                             detailsLayout.visibility = View.VISIBLE
                             data?.let {
                                 statusTxt.text = it.weather?.get(0)?.main ?: "-"
-                                val currentWindSpeed= it.wind?.speed.let {
-                                    //check if the wind speed from API is not null
-                                    if (it != null) {
-                                        // round off the wind speed
-                                        Math.round(it)
-                                    }
-                                }.toString() + "Km"
-                                val currentTemp = it.main?.temp.let {
-                                    if (it != null) {
-                                            Math.round(it)
-                                    }
-                                }.toString() +"°"
-                                val maxTemp = it.main?.tempMax.let{
-                                    if (it != null) {
-                                            Math.round(it)
-                                    }
-                                }.toString()+"°"
-                                val minTemp = it.main?.tempMin.let {
-                                    if (it != null) {
-                                        Math.round(it)
-                                    }
-                                }.toString()+"°"
+                                val humidity = it.main?.humidity.toString()+"%"
+                                val currentWindSpeed = it.wind?.speed?.let { speed ->
+                                    Math.round(speed).toString() + "Km"
+                                } ?: "- Km" // Fallback if speed is null
 
+                                val currentTemp = it.main?.temp?.let { temp ->
+                                    Math.round(temp).toString() + "°"
+                                } ?: "-°" // Fallback if temp is null
+
+                                val maxTemp = it.main?.tempMax?.let { tempMax ->
+                                    Math.round(tempMax).toString() + "°"
+                                } ?: "-°" // Fallback if tempMax is null
+
+                                val minTemp = it.main?.tempMin?.let { tempMin ->
+                                    Math.round(tempMin).toString() + "°"
+                                } ?: "-°" // Fallback if tempMin is null
+
+
+                                humidityTxt.text = humidity
                                 currentTempTxt.text = currentTemp
                                 windTxt.text = currentWindSpeed
                                 maxTempTxt.text = maxTemp
@@ -93,8 +101,47 @@ class MainActivity : AppCompatActivity() {
                     override fun onFailure(call: Call<CurrentResponseApi>, t: Throwable) {
                         Toast.makeText(this@MainActivity, t.toString(), Toast.LENGTH_SHORT).show()
                     }
-
                 })
+
+            //setting Blur View
+            val radius = 10f;
+            val decorView = window.decorView
+            val rootView = (decorView.findViewById(android.R.id.content) as ViewGroup?)
+            val windowBackground = decorView.background
+
+            rootView?.let {
+                blurView.setupWith(it,RenderScriptBlur(this@MainActivity))
+                    .setFrameClearDrawable(windowBackground)
+                    .setBlurRadius(radius)
+                blurView.outlineProvider = ViewOutlineProvider.BACKGROUND
+                blurView.clipToOutline = true
+            }
+
+            //foreCast Temp
+            weatherViewModel.loadForecastWeather(lat,lon,"metric").enqueue(object : retrofit2.Callback<ForecastResponseApi>{
+                override fun onResponse(
+                    call: Call<ForecastResponseApi>,
+                    response: Response<ForecastResponseApi>
+                ) {
+                    if (response.isSuccessful){
+                        val data = response.body()
+                        blurView.visibility = View.VISIBLE
+                        data?.let {
+                            forecastAdapter.differ.submitList(it.list)
+                            forecaseRecyclerView.apply {
+                                layoutManager = LinearLayoutManager(this@MainActivity,LinearLayoutManager.HORIZONTAL,false)
+                                Log.d("bdhfcbafdcuh", it.list.toString())
+                                adapter = forecastAdapter
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ForecastResponseApi>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+
+            })
         }
     }
     private fun isNightTime():Boolean{
@@ -154,7 +201,7 @@ class MainActivity : AppCompatActivity() {
         binding.weatherView.apply{
             setWeatherData(type)
             angle =- 20
-            emissionRate
+            emissionRate = 100.0f
         }
     }
 }
