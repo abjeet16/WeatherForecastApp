@@ -46,13 +46,15 @@ class ForecastAdapter : RecyclerView.Adapter<ForecastAdapter.viewHolder>() {
         val amPM = if (hour<12)"am" else "pm"
         val hour12 = calendar.get(Calendar.HOUR)
         binding.hourTxt.text = hour12.toString()+amPM
-        binding.TempTxt.text = differ.currentList[position].main?.temp.let {
+        binding.TempTxt.text =
+            differ.currentList[position].main?.temp?.let {
             if (it != null) {
                 Math.round(it)
             }
         }.toString()+"°"
 
-        val icon = when(differ.currentList[position].weather?.get(0)?.icon.toString()){
+        val icon =
+            when(differ.currentList[position].weather?.get(0)?.icon.toString()){
             "01d","01n"->"sunny"
             "02d","02n"->"cloudy_sunny"
             "03d","03n"->"cloudy_sunny"
