@@ -1,5 +1,6 @@
 package com.example.weatherforecast.Activity
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.RenderNode
 import android.os.Bundle
@@ -39,14 +40,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // Hide status bar
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+        supportActionBar?.hide()
+
         window.apply {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             statusBarColor = Color.TRANSPARENT
         }
         binding.apply {
-            var lat = 32.733
-            var lon = 74.867
-            var name = "Mysuru"
+
+            addCity.setOnClickListener {
+                startActivity(Intent(this@MainActivity,CityListActivity::class.java))
+            }
+            var lat = intent.getDoubleExtra("lat",0.0)
+            var lon = intent.getDoubleExtra("lon",0.0)
+            var name = intent.getStringExtra("cityName")
+
+            if (lat == 0.0){
+                name = "Null Island"
+            }
 
             //CURRENT TEMP
             cityTxt.text = name
